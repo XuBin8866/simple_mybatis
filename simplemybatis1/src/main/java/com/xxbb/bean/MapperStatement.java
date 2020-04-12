@@ -22,6 +22,10 @@ public class MapperStatement {
      * 结果集封装参数类型
      */
     private String resultType;
+    /**
+     * 执行的sql语句
+     */
+    private String sql;
 
     public String getNamespace() {
         return namespace;
@@ -55,6 +59,14 @@ public class MapperStatement {
         this.resultType = resultType;
     }
 
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
+
     @Override
     public String toString() {
         return "MapperStatement{" +
@@ -62,6 +74,7 @@ public class MapperStatement {
                 ", id='" + id + '\'' +
                 ", parameterType='" + parameterType + '\'' +
                 ", resultType='" + resultType + '\'' +
+                ", sql='" + sql + '\'' +
                 '}';
     }
 }

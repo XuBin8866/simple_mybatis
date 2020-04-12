@@ -9,10 +9,10 @@ public class SqlSessionFactory {
     /**
      * 封装xml配置信息的类
      */
-    private Configuration configuartion;
+    private Configuration configuration;
 
 
-    public SqlSessionFactory(Configuration configuartion){
-        this.configuartion=configuartion;
+    public SqlSessionFactory(Configuration configuration){
+        this.configuration=configuration;
     }
 }

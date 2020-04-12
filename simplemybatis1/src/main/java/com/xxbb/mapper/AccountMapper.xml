@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace理解为实现类的全路径 包加类名 -->
+<mapper namespace="com.xxbb.mapper.AccountMapper">
+	<resultMap id="AccountMap" type="Account">
+		<!-- 主键使用id标签配置映射关系-->
+		<id column="id" property="id"/>
+		<!-- 其他列使用result标签配置映射关系-->
+		<result column="account" property="account"/>
+		<result column="password" property="password"/>
+		<result column="balance" property="balance"/>
+		<result column="name" property="name"/>
+	</resultMap>
+	<!-- 根据账号密码查询用户信息 -->
+	<select id="queryAccount" resultMap="AccountMap" parameterType="Account">
+		select * from t_account where account=#{account} and password=#{password}
+	</select>
+	<!-- 根据用户和账号查询用户信息 -->
+	<select id="queryAccountByName" resultType="Account" parameterType="Account">
+		select * from t_account where account=#{account} and name=#{name}
+	</select>
+	<!-- 修改余额 -->
+	<update id="updateAccount" parameterType="Account" >
+		update t_account set balance=#{balance} where account=#{account}
+	</update>
+
+</mapper>

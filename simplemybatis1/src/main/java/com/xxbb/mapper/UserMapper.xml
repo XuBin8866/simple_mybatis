@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace理解为实现类的全路径 包加类名 -->
+<mapper namespace="com.xxbb.mapper.UserMapper">
+	<!-- id=方法名
+	     如果方法的返回值是List，在resultType写List的泛型，
+	     因为mybatis是对JDBC封装，一行一行读取数据
+	 -->
+	 <!-- select * from t_user limit #{0},#{1} -->
+	<!-- select * from t_user limit #{param1},#{param2} -->
+	<!-- select * from t_user limit #{pageStart},#{pageSize} -->
+	<cache readOnly="true"></cache>
+	<resultMap id="UserMap" type="User">
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="password" property="password"/>
+		<result column="if_freeze" property="ifFreeze"/>
+		<!--关联一个对象-->
+		<association property="freeze" select="com.xxbb.mapper.FreezeMapper.queryFreezeById" column="if_freeze">
+
+		</association>
+	</resultMap>
+<!--	<select id="queryUser" resultMap="UserMap" parameterType="map">-->
+<!--		select * from t_user-->
+<!--		<if test="pageStart!=null and pageSize!=null">-->
+<!--			limit #{pageStart},#{pageSize}-->
+<!--		</if>-->
+<!--	</select>-->
+	<select id="queryUserByFreeze" resultType="User">
+		select * from t_user
+		<where>
+			<if test="param1!=null">
+				and if_freeze=#{param1}
+			</if>
+		</where>
+	</select>
+	<select id="queryUserById" resultType="User">
+		select * from t_user
+		<where>
+			<if test="param1!=null">
+			and id=#{param1}
+			</if>
+		</where>
+	</select>
+	<select id="queryMap" resultType="map">
+		select * from t_user
+	</select>
+	<insert id="insertUser" parameterType="User">
+		insert into t_user(id,username,password,if_freeze) values(#{id},#{username},#{password},#{ifFreeze})
+	</insert>
+	<select id="queryUserCount" resultType="long">
+		select count(*) from t_user
+	</select>
+	
+</mapper>

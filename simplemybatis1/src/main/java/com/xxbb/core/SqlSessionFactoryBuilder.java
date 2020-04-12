@@ -1,6 +1,9 @@
 package com.xxbb.core;
 
+
+
 import com.xxbb.bean.Configuration;
+import com.xxbb.utils.XmlConfigBuilder;
 
 import java.io.InputStream;
 
@@ -9,10 +12,9 @@ import java.io.InputStream;
  */
 public class SqlSessionFactoryBuilder {
     public SqlSessionFactory build(InputStream is){
-
-
-
-        Configuration configuartion=null;
-        return new SqlSessionFactory(configuartion);
+        Configuration configuration=new XmlConfigBuilder().parse(is);
+        
+        return new SqlSessionFactory(configuration);
     }
+
 }
