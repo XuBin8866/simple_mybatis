@@ -13,17 +13,21 @@
 		<result column="balance" property="balance"/>
 		<result column="name" property="name"/>
 	</resultMap>
+	<!-- 查询所哟账号信息 -->
+	<select id="queryAccount" resultType="com.xxbb.domain.Account" parameterType="com.xxbb.domain.Account">
+		select * from t_account
+	</select>
 	<!-- 根据账号密码查询用户信息 -->
-	<select id="queryAccount" resultMap="AccountMap" parameterType="Account">
-		select * from t_account where account=#{account} and password=#{password}
+	<select id="queryAccountById" resultType="com.xxbb.domain.Account" parameterType="com.xxbb.domain.Account">
+		select * from t_account where id=?
 	</select>
 	<!-- 根据用户和账号查询用户信息 -->
-	<select id="queryAccountByName" resultType="Account" parameterType="Account">
-		select * from t_account where account=#{account} and name=#{name}
+	<select id="queryAccountByName" resultType="com.xxbb.domain.Account" parameterType="com.xxbb.domain.Account">
+		select * from t_account where name=?
 	</select>
 	<!-- 修改余额 -->
-	<update id="updateAccount" parameterType="Account" >
-		update t_account set balance=#{balance} where account=#{account}
+	<update id="updateAccount" parameterType="com.xxbb.domain.Account">
+		update t_account set money=? where id=?
 	</update>
 
 </mapper>
