@@ -8,6 +8,8 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
+ * 数据库连接池接口
+ *
  * @author xxbb
  */
 public interface MyDataSource extends DataSource {

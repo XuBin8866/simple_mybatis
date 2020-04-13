@@ -2,8 +2,6 @@ package com.xxbb.core;
 
 import com.xxbb.bean.Configuration;
 import com.xxbb.bean.MapperStatement;
-import com.xxbb.executor.Executor;
-import com.xxbb.proxy.MapperProxy;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -27,6 +25,13 @@ public class SqlSession {
         this.executor = executor;
     }
 
+    /**
+     * 创捷接口的代理实现类
+     *
+     * @param clazz 传入的接口字节码文件
+     * @param <T>   泛型
+     * @return 接口的代理实现类
+     */
     public <T> T getMapper(Class<T> clazz) {
         MapperProxy mapperProxy = new MapperProxy(this);
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, mapperProxy);

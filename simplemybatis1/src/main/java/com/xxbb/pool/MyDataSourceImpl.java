@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 /**
+ * 连接池实现类
+ *
  * @author xxbb
  */
 public class MyDataSourceImpl implements MyDataSource {

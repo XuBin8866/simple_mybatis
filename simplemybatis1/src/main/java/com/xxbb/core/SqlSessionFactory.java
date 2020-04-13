@@ -1,7 +1,6 @@
 package com.xxbb.core;
 
 import com.xxbb.bean.Configuration;
-import com.xxbb.executor.Executor;
 
 /**
  * @author xxbb
@@ -17,6 +16,11 @@ public class SqlSessionFactory {
         this.configuration = configuration;
     }
 
+    /**
+     * 创建SqlSession对象
+     *
+     * @return SqlSession对象
+     */
     public SqlSession openSession() {
         Executor executor = new Executor(configuration);
         return new SqlSession(configuration, executor);

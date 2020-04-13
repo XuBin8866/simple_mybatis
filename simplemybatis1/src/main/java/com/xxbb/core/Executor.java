@@ -1,4 +1,4 @@
-package com.xxbb.executor;
+package com.xxbb.core;
 
 import com.xxbb.bean.Configuration;
 import com.xxbb.bean.MapperStatement;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 执行器
+ * 执行器，真正进行数据库操作的对象
  *
  * @author xxbb
  */
@@ -22,6 +22,14 @@ public class Executor {
         this.dataSource = MyDataSourceImpl.getInstance(configuration.getEnvironment());
     }
 
+    /**
+     * 查询信息
+     *
+     * @param mapperStatement 封装了sql相关信息的对象
+     * @param args            需要传入sql语句中的参数
+     * @param <T>             泛型
+     * @return 泛型集合
+     */
     public <T> List<T> query(MapperStatement mapperStatement, Object[] args) {
         Connection connection = null;
         try {
@@ -57,6 +65,14 @@ public class Executor {
         }
     }
 
+    /**
+     * 将结果集封装到对象中
+     *
+     * @param resultSet  结果集
+     * @param resultType 封装的对象类型
+     * @param resultList 封装处理得到对象的集合
+     * @param <T>        泛型
+     */
     private <T> void handlerResultType(ResultSet resultSet, String resultType, List<T> resultList) {
         //获取返回类型的对象
         try {

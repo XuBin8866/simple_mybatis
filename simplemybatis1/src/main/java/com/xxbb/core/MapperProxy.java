@@ -1,6 +1,4 @@
-package com.xxbb.proxy;
-
-import com.xxbb.core.SqlSession;
+package com.xxbb.core;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -8,6 +6,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
+ * mapper接口类的代理实现类
+ *
  * @author xxbb
  */
 public class MapperProxy implements InvocationHandler {

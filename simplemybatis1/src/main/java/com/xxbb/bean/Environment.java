@@ -1,6 +1,8 @@
 package com.xxbb.bean;
 
 /**
+ * 数据库连接信息
+ *
  * @author xxbb
  */
 public class Environment {
