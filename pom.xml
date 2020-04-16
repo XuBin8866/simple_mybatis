@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>simplemybatis1</module>
+        <module>simplemybatis2</module>
     </modules>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/cglib/cglib -->
