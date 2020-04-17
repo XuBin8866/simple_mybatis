@@ -27,6 +27,48 @@ public class Configuration {
     protected final Map<String, MappedStatement> mappedStatementMap = new HashMap<>();
 
     /**
+     * 注册mapper接口类
+     *
+     * @param type mapper接口类
+     * @param <T>  泛型
+     */
+    public <T> void addMapper(Class<T> type) {
+        this.mapperRegistry.addMapper(type);
+    }
+
+    /**
+     * 获取mapper代理对象
+     *
+     * @param type       mapper接口
+     * @param sqlSession 当前使用的sqlSession对象
+     * @param <T>        泛型
+     * @return 代理对象
+     */
+    public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+        return this.mapperRegistry.getMapper(type, sqlSession);
+    }
+
+    /**
+     * 将sql信息对象存储进map中
+     *
+     * @param statement       标识一个封装sql信息对象的唯一id
+     * @param mappedStatement 封装了sql信息的对象
+     */
+    public void addMappedStatement(String statement, MappedStatement mappedStatement) {
+        this.mappedStatementMap.put(statement, mappedStatement);
+    }
+
+    /**
+     * 根据sql唯一id从map中获取封装sql信息的对象
+     *
+     * @param statement 标识一个封装sql信息对象的唯一id
+     * @return 封装了sql信息的对象
+     */
+    public MappedStatement getMappedStatement(String statement) {
+        return this.mappedStatementMap.get(statement);
+    }
+
+    /**
      * 获取配置文件属性(属性不存再则返回空字符串"")
      *
      * @param key 键名

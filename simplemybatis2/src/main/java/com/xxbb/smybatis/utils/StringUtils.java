@@ -1,7 +1,5 @@
 package com.xxbb.smybatis.utils;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,35 +108,7 @@ public class StringUtils {
         return str != null && str.trim().length() > 0;
     }
 
-    /**
-     * list/set is not empty
-     *
-     * @param collection 集合
-     * @return 结果
-     */
-    public static boolean isNotEmpty(Collection<?> collection) {
-        return collection != null && !collection.isEmpty();
-    }
 
-    /**
-     * map is not empty
-     *
-     * @param map map
-     * @return 结果
-     */
-    public static boolean isNotEmpty(Map<?, ?> map) {
-        return map != null && !map.isEmpty();
-    }
-
-    /**
-     * 数组不为空
-     *
-     * @param objects 数组
-     * @return 结果
-     */
-    public static boolean isNotEmpty(Object[] objects) {
-        return objects != null && objects.length > 0;
-    }
 
     /**
      * 对字符串去空白符和换行符等

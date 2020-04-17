@@ -3,11 +3,11 @@ package com.xxbb.smybatis.utils;
 
 import com.xxbb.smybatis.constants.Constant;
 import com.xxbb.smybatis.mapping.MappedStatement;
+import com.xxbb.smybatis.session.Configuration;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import javax.security.auth.login.Configuration;
 import java.io.File;
 import java.util.Iterator;
 
@@ -82,7 +82,9 @@ public class XmlParseUtils {
                 System.out.println(statement);
 
                 //封装进configuration对象
-
+                configuration.addMappedStatement(id, statement);
+                //注册一个该mapper对象接口类的代理工厂
+                configuration.addMapper(Class.forName(namespace));
 
             }
 
