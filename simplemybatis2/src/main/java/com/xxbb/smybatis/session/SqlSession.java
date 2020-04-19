@@ -1,6 +1,5 @@
 package com.xxbb.smybatis.session;
 
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -72,10 +71,5 @@ public interface SqlSession {
      */
     Configuration getConfiguration();
 
-    /**
-     * 获取连接
-     *
-     * @return 连接对象
-     */
-    Connection getConnection();
+
 }

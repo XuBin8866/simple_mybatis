@@ -21,22 +21,26 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
     public DefaultSqlSessionFactory(Configuration configuration) {
         this.configuration = configuration;
+        //将mappedStatement的消信息存储起来，并注册代理工厂
+        loadMappersInfo(Configuration.getProperty(Constant.MAPPER_LOCATION).replaceAll("\\.", "/"));
 
     }
 
     @Override
     public SqlSession openSession() {
-        return null;
+
+        return new DefaultSqlSession(this.configuration);
     }
 
     /**
      * 解析mapper.xml中的信息封装进Configuration对象的mappedStatementMap中
      *
-     * @param dirName
+     * @param dirName mapper.xml所在的文件夹名
      */
     public void loadMappersInfo(String dirName) {
         String resource = Objects.requireNonNull
                 (DefaultSqlSessionFactory.class.getClassLoader().getResource(dirName)).getPath();
+        System.out.println("DefaultSqlSessionFactory--->加载mapper资源路径：" + resource);
         File mapperDir = new File(resource);
         //判断该路径是否为文件夹
         if (mapperDir.isDirectory()) {

@@ -16,7 +16,7 @@ public class ReflectUtils {
      * @return 类对象的属性
      */
     public static Object invokeGet(Object object, String fieldName) {
-        Class<?> clazz = object.getClass();
+        Class clazz = object.getClass();
         Method method = null;
         Object res = null;
         try {
@@ -36,12 +36,14 @@ public class ReflectUtils {
      * @param value      属性值
      */
     public static void invokeSet(Object obj, String columnName, Object value) {
-        Class<?> clazz = obj.getClass();
+        Class clazz = obj.getClass();
         Method method = null;
         try {
             method = clazz.getDeclaredMethod("set" + StringUtils.columnNameToMethodName(columnName), value.getClass());
+
             method.invoke(obj, value);
         } catch (Exception e) {
+            System.out.println("ReflectUtils.invokeSet--->value=" + value.getClass());
             e.printStackTrace();
         }
 

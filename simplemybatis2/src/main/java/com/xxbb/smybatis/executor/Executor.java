@@ -13,9 +13,9 @@ public interface Executor {
     /**
      * 查询操作
      *
+     * @param <E>             泛型，和mappedStatement中的returnType有关
      * @param mappedStatement sql信息对象
      * @param parameter       参数
-     * @param <E>             泛型，和mappedStatement中的returnType有关
      * @return 封装好的结果集
      */
     <E> List<E> doQuery(MappedStatement mappedStatement, Object parameter);

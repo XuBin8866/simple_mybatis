@@ -61,9 +61,9 @@ public class XmlParseUtils {
                 String id = namespace + "." + elementId;
                 //封装信息
                 //判断标签名是否已定义，未定义则使用default
-                if (!Constant.SqlType.SELECT.value().equals(elementName) ||
-                        !Constant.SqlType.UPDATE.value().equals(elementName) ||
-                        !Constant.SqlType.DELETE.value().equals(elementName) ||
+                if (!Constant.SqlType.SELECT.value().equals(elementName) &&
+                        !Constant.SqlType.UPDATE.value().equals(elementName) &&
+                        !Constant.SqlType.DELETE.value().equals(elementName) &&
                         !Constant.SqlType.INSERT.value().equals(elementName)) {
                     System.out.println("mapper.xml中存在未定义标签:" + elementName);
                     statement.setSqlType(Constant.SqlType.DEFAULT.value());
@@ -79,14 +79,12 @@ public class XmlParseUtils {
                 statement.setNamespace(namespace);
                 statement.setSql(StringUtils.stringTrim(sql));
 
-                System.out.println(statement);
-
                 //封装进configuration对象
                 configuration.addMappedStatement(id, statement);
                 //注册一个该mapper对象接口类的代理工厂
                 configuration.addMapper(Class.forName(namespace));
-
             }
+            System.out.println();
 
 
         } catch (Exception e) {

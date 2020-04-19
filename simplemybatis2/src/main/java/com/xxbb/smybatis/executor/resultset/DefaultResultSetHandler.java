@@ -36,7 +36,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
             //处理结果集
             while (resultSet.next()) {
                 //实例化结果集对应的类
-                E rowObject = (E) Class.forName(mappedStatement.getReturnType());
+                E rowObject = (E) Class.forName(mappedStatement.getReturnType()).newInstance();
                 //遍历每一行数据并封装进对象中
                 for (int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
                     //获取列名和该列的值，从1开始，这里获取的是该列的别名
@@ -51,6 +51,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
                 result.add(rowObject);
 
             }
+            System.out.println(result.get(0));
             return result;
         } catch (Exception e) {
             e.printStackTrace();

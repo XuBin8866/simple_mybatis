@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 /**
- * 连接池实现类
+ * 连接池实现类，继承DataSource是为了成为他的子类
  *
  * @author xxbb
  */

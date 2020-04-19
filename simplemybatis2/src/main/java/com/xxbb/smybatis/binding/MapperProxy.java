@@ -49,29 +49,25 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         //查询
         if (Constant.SqlType.SELECT.value().equals(mappedStatement.getSqlType())) {
             Class<?> returnType = method.getReturnType();
-            if (!mappedStatement.getReturnType().equals(returnType.getName())) {
-                throw new RuntimeException("方法需要的返回值和mappedStatement提供的返回值不同---->方法需要："
-                        + returnType.getName() + "  mappedStatement提供：" + mappedStatement.getReturnType());
-            }
             //返回值为集合类型
             if (Collection.class.isAssignableFrom(returnType)) {
-                result = sqlSession.selectList(statementId, mappedStatement);
+                result = sqlSession.selectList(statementId, args);
             } else {
-                result = sqlSession.selectOne(statementId, mappedStatement);
+                result = sqlSession.selectOne(statementId, args);
             }
 
         }
         //更新
         if (Constant.SqlType.UPDATE.value().equals(mappedStatement.getSqlType())) {
-            result = sqlSession.update(statementId, mappedStatement);
+            result = sqlSession.update(statementId, args);
         }
         //插入
         if (Constant.SqlType.INSERT.value().equals(mappedStatement.getSqlType())) {
-            result = sqlSession.insert(statementId, mappedStatement);
+            result = sqlSession.insert(statementId, args);
         }
         //删除
         if (Constant.SqlType.DELETE.value().equals(mappedStatement.getSqlType())) {
-            result = sqlSession.delete(statementId, mappedStatement);
+            result = sqlSession.delete(statementId, args);
         }
 
 
