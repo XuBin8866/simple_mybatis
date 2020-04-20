@@ -40,7 +40,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     public void loadMappersInfo(String dirName) {
         String resource = Objects.requireNonNull
                 (DefaultSqlSessionFactory.class.getClassLoader().getResource(dirName)).getPath();
-        System.out.println("DefaultSqlSessionFactory--->加载mapper资源路径：" + resource);
+        System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "加载资源路径" + resource);
         File mapperDir = new File(resource);
         //判断该路径是否为文件夹
         if (mapperDir.isDirectory()) {
@@ -62,4 +62,5 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
         }
     }
+
 }

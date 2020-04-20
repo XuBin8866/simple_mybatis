@@ -1,6 +1,5 @@
 package com.xxbb.smybatis.executor;
 
-import com.xxbb.smybatis.constants.Constant;
 import com.xxbb.smybatis.executor.parameter.DefaultParameterHandler;
 import com.xxbb.smybatis.executor.parameter.ParameterHandler;
 import com.xxbb.smybatis.executor.resultset.DefaultResultSetHandler;
@@ -8,9 +7,13 @@ import com.xxbb.smybatis.executor.resultset.ResultSetHandler;
 import com.xxbb.smybatis.executor.statement.SimpleStatementHandler;
 import com.xxbb.smybatis.executor.statement.StatementHandler;
 import com.xxbb.smybatis.mapping.MappedStatement;
+import com.xxbb.smybatis.pool.MyDataSourceImpl;
 import com.xxbb.smybatis.session.Configuration;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -19,24 +22,16 @@ import java.util.List;
  * @author xxbb
  */
 public class SimpleExecutor implements Executor {
-    /**
-     * 数据库连接
-     */
-    private static Connection connection;
-    /**
-     * 配置类
-     */
-    private final Configuration configuration;
 
     /**
-     * 初始化连接
+     * 连接池对象
      */
-    static {
-        initConnect();
-    }
+    private final MyDataSourceImpl dataSource;
+
+
 
     public SimpleExecutor(Configuration configuration) {
-        this.configuration = configuration;
+        dataSource = configuration.getDataSource();
     }
 
     /**
@@ -48,9 +43,10 @@ public class SimpleExecutor implements Executor {
      * @return List结果集或受影响的行数
      */
     public Object executeTemplate(MappedStatement mappedStatement, Object parameter, ExecutorCallback executorCallback) {
+        Connection connection = null;
         try {
             //获取连接
-            Connection connection = getConnection();
+            connection = dataSource.getConnection();
             //实例化StatementHandler对象
             StatementHandler statementHandler = new SimpleStatementHandler(mappedStatement);
             //对mapperStatement中的sql语句进行处理，去除头尾空格，将#{}替换成?,封装成preparedStatement对象
@@ -58,12 +54,13 @@ public class SimpleExecutor implements Executor {
             //给占位符?的参数赋值
             ParameterHandler parameterHandler = new DefaultParameterHandler(parameter);
             parameterHandler.setParameters(preparedStatement);
+            System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + preparedStatement);
             return executorCallback.doExecutor(statementHandler, preparedStatement);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         } finally {
-            //TODO 归还数据库连接
+            dataSource.returnConnection(connection);
         }
     }
 
@@ -81,6 +78,7 @@ public class SimpleExecutor implements Executor {
         return (List<E>) executeTemplate(mappedStatement, parameter, (statementHandler, preparedStatement) -> {
             //执行sql语句
             try {
+
                 //获取结果集
                 ResultSet resultSet = statementHandler.query(preparedStatement);
                 //处理结果集，封装成泛型List对象返回
@@ -116,37 +114,6 @@ public class SimpleExecutor implements Executor {
         });
     }
 
-
-    /**
-     * 初始化连接
-     */
-    private static void initConnect() {
-        String driver = Configuration.getProperty(Constant.JDBC_DRIVER);
-        String url = Configuration.getProperty(Constant.JDBC_URL);
-        String username = Configuration.getProperty(Constant.JDBC_USERNAME);
-        String password = Configuration.getProperty(Constant.JDBC_PASSWORD);
-
-        try {
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, username, password);
-            System.out.println("数据库连接成功！！！");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 获取连接
-     *
-     * @return 当前执行器拥有的连接
-     */
-    public Connection getConnection() throws SQLException {
-        if (null != connection) {
-            return connection;
-        } else {
-            throw new SQLException("无法获取连接，请检查配置");
-        }
-    }
 
 
 }

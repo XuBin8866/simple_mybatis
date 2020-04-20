@@ -2,6 +2,7 @@ package com.xxbb.smybatis.session;
 
 import com.xxbb.smybatis.binding.MapperRegistry;
 import com.xxbb.smybatis.mapping.MappedStatement;
+import com.xxbb.smybatis.pool.MyDataSourceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,8 @@ public class Configuration {
      * mapper中的sql信息
      */
     protected final Map<String, MappedStatement> mappedStatementMap = new HashMap<>();
+
+    protected MyDataSourceImpl myDataSource = MyDataSourceImpl.getInstance();
 
     /**
      * 注册mapper接口类
@@ -66,6 +69,10 @@ public class Configuration {
      */
     public MappedStatement getMappedStatement(String statement) {
         return this.mappedStatementMap.get(statement);
+    }
+
+    public MyDataSourceImpl getDataSource() {
+        return myDataSource;
     }
 
     /**

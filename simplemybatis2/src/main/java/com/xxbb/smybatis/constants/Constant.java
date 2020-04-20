@@ -32,6 +32,22 @@ public interface Constant {
      * 密码
      */
     String JDBC_PASSWORD = "jdbc.password";
+    /**
+     * 初始化连接个数
+     */
+    String JDBC_INIT_COUNT = "jdbc.initCount";
+    /**
+     * 最小连接个数
+     */
+    String JDBC_MIN_COUNT = "jdbc.minCount";
+    /**
+     * 最大连接个数
+     */
+    String JDBC_MAX_COUNT = "jdbc.maxCount";
+    /**
+     * 连接增长步长
+     */
+    String JDBC_INCREASING_COUNT = "jdbc.increasingCount";
 
     //mapper文件的标签的信息
     /**
