@@ -26,18 +26,14 @@ public class StringUtils {
      * @return 取出t_的下划线转驼峰+首字母大写字段
      */
     public static String tableNameToClassName(String str) {
-        return firstCharToUpperCase(lineToHump(str.substring(2)));
+        if ("t_".equals(str.substring(0, 2))) {
+            return firstCharToUpperCase(lineToHump(str.substring(2)));
+        } else {
+            return lineToHump(str);
+        }
+
     }
 
-    /**
-     * 将类名转化为数据库表名
-     *
-     * @param str 传入类名
-     * @return 数据库表名
-     */
-    public static String classNameToTableName(String str) {
-        return "t_" + humpToLine(str);
-    }
 
     /**
      * 将数据库字段名转化为类的命名规则，即下划线改驼峰+首字母大写，例如要获取if_freeze字段的方法，方法为getIfFreeze(),
@@ -67,7 +63,7 @@ public class StringUtils {
      */
     public static String lineToHump(String str) {
         //将小写转换
-        String newStr = str = str.toLowerCase();
+        String newStr = str.toLowerCase();
         Matcher matcher = linePattern.matcher(newStr);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {

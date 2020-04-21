@@ -26,7 +26,9 @@ public class Configuration {
      * mapper中的sql信息
      */
     protected final Map<String, MappedStatement> mappedStatementMap = new HashMap<>();
-
+    /**
+     * 数据库连接池对象
+     */
     protected MyDataSourceImpl myDataSource = MyDataSourceImpl.getInstance();
 
     /**
