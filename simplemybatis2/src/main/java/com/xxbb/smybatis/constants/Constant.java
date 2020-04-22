@@ -94,7 +94,7 @@ public interface Constant {
         DELETE("delete"),
         DEFAULT("default");
 
-        private String value;
+        private final String value;
 
         SqlType(String value) {
             this.value = value;
