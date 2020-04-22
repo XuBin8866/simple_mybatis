@@ -1,13 +1,24 @@
 package com.xxbb.smybatis.session.defaults;
 
+import com.xxbb.smybatis.bean.ColumnInfo;
+import com.xxbb.smybatis.bean.TableInfo;
 import com.xxbb.smybatis.constants.Constant;
+import com.xxbb.smybatis.pool.MyDataSource;
 import com.xxbb.smybatis.session.Configuration;
 import com.xxbb.smybatis.session.SqlSession;
 import com.xxbb.smybatis.session.SqlSessionFactory;
 import com.xxbb.smybatis.utils.CommonUtils;
+import com.xxbb.smybatis.utils.StringUtils;
 import com.xxbb.smybatis.utils.XmlParseUtils;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -18,13 +29,40 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
      * 配置对象
      */
     private final Configuration configuration;
+    /**
+     * 单例工厂对象
+     */
+    private static volatile DefaultSqlSessionFactory instance;
 
-    public DefaultSqlSessionFactory(Configuration configuration) {
+    private DefaultSqlSessionFactory(Configuration configuration) {
+        //防止反射通过反射实例化对象而跳过getInstance方法
+        if (instance != null) {
+            throw new RuntimeException("Object has been instanced,please do not create Object by Reflect!!!");
+        }
         this.configuration = configuration;
         //将mappedStatement的消信息存储起来，并注册代理工厂
         loadMappersInfo(Configuration.getProperty(Constant.MAPPER_LOCATION).replaceAll("\\.", "/"));
-
+        //加载所访问数据库的所有表结构信息
+        loadTableInfo(configuration);
     }
+
+    /**
+     * 双重检测锁获取单例工厂
+     *
+     * @param configuration 配置信息
+     * @return 单例工厂
+     */
+    public static DefaultSqlSessionFactory getInstance(Configuration configuration) {
+        if (instance == null) {
+            synchronized (DefaultSqlSessionFactory.class) {
+                if (instance == null) {
+                    instance = new DefaultSqlSessionFactory(configuration);
+                }
+            }
+        }
+        return instance;
+    }
+
 
     @Override
     public SqlSession openSession() {
@@ -37,7 +75,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
      *
      * @param dirName mapper.xml所在的文件夹名
      */
-    public void loadMappersInfo(String dirName) {
+    private void loadMappersInfo(String dirName) {
         String resource = Objects.requireNonNull
                 (DefaultSqlSessionFactory.class.getClassLoader().getResource(dirName)).getPath();
         System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "加载资源路径" + resource);
@@ -62,5 +100,82 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
         }
     }
+
+    /**
+     * 将数据库表信息封装到一个与po类映射的map对象中，存入Configuration对象中
+     *
+     * @param configuration 当前Configuration对象
+     */
+    private void loadTableInfo(Configuration configuration) {
+        //获取数据库连接，用于读取数据库元数据
+        MyDataSource dataSource = this.configuration.getDataSource();
+        Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+            //获取数据库元数据
+            DatabaseMetaData databaseMetaData = conn.getMetaData();
+            //当前读取的数据库名称
+            String catalog = Configuration.getProperty(Constant.CATALOG);
+            //获取该数据的所有表信息
+            ResultSet tableResultSet = databaseMetaData.getTables(catalog, "%", "%", new String[]{"TABLE"});
+            //存储表信息的集合
+            List<TableInfo> tableInfos = new ArrayList<>();
+            //遍历表
+            while (tableResultSet.next()) {
+                //获取表名
+                String tableName = tableResultSet.getString("TABLE_NAME");
+                //创建表对象
+                TableInfo tableInfo = new TableInfo(tableName, new HashMap<>(10), new ArrayList<>(), new ArrayList<>());
+                //获取该表的普通列信息
+                ResultSet columnResultSet = databaseMetaData.getColumns(catalog, "%", tableName, null);
+                //遍历普通列,先将所有列都设置为普通列
+                while (columnResultSet.next()) {
+                    ColumnInfo columnInfo = new ColumnInfo(columnResultSet.getString("COLUMN_NAME"),
+                            columnResultSet.getString("TYPE_NAME"), 0);
+                    tableInfo.getColumnInfoMap().put(columnInfo.getName(), columnInfo);
+                }
+                //获取主键列信息
+                ResultSet primaryKeyResultSet = databaseMetaData.getPrimaryKeys(catalog, "%", tableName);
+                //遍历
+                while (primaryKeyResultSet.next()) {
+                    //获取主键列
+                    ColumnInfo primaryColumnInfo = tableInfo.getColumnInfoMap().get(primaryKeyResultSet.getString("COLUMN_NAME"));
+
+                    primaryColumnInfo.setKeyType(1);
+                    //添加到主键的集合中
+                    tableInfo.getPrimaryKeys().add(primaryColumnInfo);
+                }
+                //由于在SqlSession中需要利用到主键进行修改和删除操作，所以如果当前表没有主键需要抛出异常
+                if (tableInfo.getPrimaryKeys().size() == 0) {
+                    throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" +
+                            "数据库表" + tableName + "未检测到主键");
+                }
+                //获取外键列信息
+                ResultSet foreignKeyResultSet = databaseMetaData.getExportedKeys(catalog, "%", tableName);
+                //遍历
+                while (foreignKeyResultSet.next()) {
+                    //获取外键列
+                    ColumnInfo foreignColumnInfo = tableInfo.getColumnInfoMap().get(foreignKeyResultSet.getString("COLUMN_NAME"));
+                    tableInfo.getForeignKeys().add(foreignColumnInfo);
+                }
+                //反射获取该表对应的po类
+                Class<?> clazz = Class.forName(Configuration.getProperty(Constant.PO_LOCATION) + "." + StringUtils.tableNameToClassName(tableName));
+                //将类与表的映射关系存入configuration对象的map中
+                System.out.println(tableInfo);
+                this.configuration.getClassToTableInfoMap().put(clazz, tableInfo);
+                System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "加载实体类与数据库表的映射：" +
+                        Configuration.getProperty(Constant.PO_LOCATION) + "." + StringUtils.tableNameToClassName(tableName) + "<------>" +
+                        tableName);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "获取数据库数据失败：" + e.getMessage());
+        } catch (ClassNotFoundException exception) {
+            throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "类未找到：" + exception.getMessage());
+        } finally {
+            dataSource.returnConnection(conn);
+        }
+    }
+
 
 }

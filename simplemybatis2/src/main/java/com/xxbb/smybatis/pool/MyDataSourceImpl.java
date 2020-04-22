@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 /**
+ * 数据库连接池
+ *
  * @author xxbb
  */
 public class MyDataSourceImpl implements MyDataSource {
@@ -101,7 +103,6 @@ public class MyDataSourceImpl implements MyDataSource {
         if (null == instance) {
             synchronized (MyDataSourceImpl.class) {
                 if (null == instance) {
-
                     instance = new MyDataSourceImpl();
                 }
             }
@@ -128,7 +129,7 @@ public class MyDataSourceImpl implements MyDataSource {
     /**
      * 构建数据库连接对象
      *
-     * @return
+     * @return 连接
      */
     private Connection createConnection() {
         try {
@@ -214,6 +215,7 @@ public class MyDataSourceImpl implements MyDataSource {
      * @param conn 连接
      */
 
+    @Override
     public void returnConnection(Connection conn) {
 
         synchronized (MONITOR) {
@@ -229,6 +231,7 @@ public class MyDataSourceImpl implements MyDataSource {
      *
      * @return 空闲连接数
      */
+    @Override
     public int getIdleCount() {
         return conns.size();
     }
@@ -238,6 +241,7 @@ public class MyDataSourceImpl implements MyDataSource {
      *
      * @return 已创建连接数量
      */
+    @Override
     public int getCreatedCount() {
         return createdCount;
     }

@@ -14,6 +14,32 @@ import java.util.logging.Logger;
  * @author xxbb
  */
 public interface MyDataSource extends DataSource {
+    //MyDataSource自己的方法
+
+    /**
+     * 将连接归还到连接池
+     *
+     * @param conn 连接
+     */
+    void returnConnection(Connection conn);
+
+    /**
+     * 获取空闲连接数
+     *
+     * @return 空闲连接数
+     */
+    int getIdleCount();
+
+    /**
+     * 获取已创建连接数
+     *
+     * @return 已创建连接数
+     */
+    int getCreatedCount();
+
+
+    //DataSource接口的方法，先在此默认实现，则其子类就可以不需要实现，使子类代码更简洁
+
     /**
      * <p>Attempts to establish a connection with the data source that
      * this {@code DataSource} object represents.

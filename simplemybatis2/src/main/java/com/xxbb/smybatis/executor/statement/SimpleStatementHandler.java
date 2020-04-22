@@ -17,11 +17,11 @@ public class SimpleStatementHandler implements StatementHandler {
     /**
      * 正则匹配语句中的#{}标签
      */
-    private static Pattern param_pattern = Pattern.compile("#\\{([^\\{\\}]*)\\}");
+    private static final Pattern PARAM_PATTERN = Pattern.compile("#\\{([^{}]*)}");
     /**
      * 封装sql语句的对象
      */
-    private MappedStatement mappedStatement;
+    private final MappedStatement mappedStatement;
 
 
     public SimpleStatementHandler(MappedStatement mappedStatement) {
@@ -71,7 +71,7 @@ public class SimpleStatementHandler implements StatementHandler {
      */
     private static String parseSymbol(String originSql) {
         originSql = originSql.trim();
-        Matcher matcher = param_pattern.matcher(originSql);
+        Matcher matcher = PARAM_PATTERN.matcher(originSql);
         return matcher.replaceAll("?");
     }
 

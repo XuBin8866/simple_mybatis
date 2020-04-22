@@ -25,7 +25,9 @@ public class DefaultParameterHandler implements ParameterHandler {
     public void setParameters(PreparedStatement paramPreparedStatement) {
         try {
             if (null != parameter) {
+
                 if (parameter.getClass().isArray()) {
+                    System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + parameter.getClass());
                     Object[] params = (Object[]) parameter;
                     for (int i = 0; i < params.length; i++) {
                         paramPreparedStatement.setObject(i + 1, params[i]);

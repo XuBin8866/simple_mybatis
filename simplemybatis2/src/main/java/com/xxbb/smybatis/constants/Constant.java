@@ -17,6 +17,14 @@ public interface Constant {
      */
     String MAPPER_LOCATION = "mapper.location";
     /**
+     * 与数据库表对应的po类所在的包
+     */
+    String PO_LOCATION = "po.location";
+    /**
+     * 所访问的数据库名
+     */
+    String CATALOG = "catalog";
+    /**
      * 数据库连接驱动
      */
     String JDBC_DRIVER = "jdbc.driver";
@@ -48,6 +56,7 @@ public interface Constant {
      * 连接增长步长
      */
     String JDBC_INCREASING_COUNT = "jdbc.increasingCount";
+
 
     //mapper文件的标签的信息
     /**

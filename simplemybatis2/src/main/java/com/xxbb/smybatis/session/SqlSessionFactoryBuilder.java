@@ -15,8 +15,8 @@ public class SqlSessionFactoryBuilder {
      * 读取配置文件构建SqlSessionFactory工厂
      * 将配置文件的解析成输入流的工作也放到该方法中
      *
-     * @param fileName
-     * @return
+     * @param fileName 配置文件名
+     * @return 工厂对象
      */
     public SqlSessionFactory build(String fileName) {
         InputStream is = SqlSessionFactoryBuilder.class.getClassLoader().getResourceAsStream(fileName);
@@ -29,7 +29,7 @@ public class SqlSessionFactoryBuilder {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new DefaultSqlSessionFactory(new Configuration());
+        return DefaultSqlSessionFactory.getInstance(new Configuration());
     }
 
 

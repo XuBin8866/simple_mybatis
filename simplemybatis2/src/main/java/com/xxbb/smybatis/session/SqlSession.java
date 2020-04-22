@@ -38,6 +38,15 @@ public interface SqlSession {
     int update(String statement, Object parameter);
 
     /**
+     * 传入po类对象自动生成sql语句并执行
+     *
+     * @param type 封装好数据的po类对象
+     * @param <T>  泛型
+     * @return 受影响的行数
+     */
+    <T> int update(T type);
+
+    /**
      * 插入
      *
      * @param statement 封装好sql语句的唯一id
@@ -47,6 +56,15 @@ public interface SqlSession {
     int insert(String statement, Object parameter);
 
     /**
+     * 传入po类对象自动生成sql语句并执行
+     *
+     * @param type 封装好数据的po类对象
+     * @param <T>  泛型
+     * @return 受影响的行数
+     */
+    <T> int insert(T type);
+
+    /**
      * 删除
      *
      * @param statement 封装好sql语句的唯一id
@@ -54,6 +72,15 @@ public interface SqlSession {
      * @return 受影响的行数
      */
     int delete(String statement, Object parameter);
+
+    /**
+     * 传入po类对象自动生成sql语句并执行
+     *
+     * @param type 封装好数据的po类对象
+     * @param <T>  泛型
+     * @return 受影响的行数
+     */
+    <T> int delete(T type);
 
     /**
      * 获取mapper

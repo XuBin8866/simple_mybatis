@@ -13,12 +13,6 @@
         <module>simplemybatis2</module>
     </modules>
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/cglib/cglib -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.3.0</version>
-        </dependency>
         <!--https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -43,11 +37,11 @@
             <artifactId>dom4j</artifactId>
             <version>1.6.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+        <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
         <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.13.1</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.21</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

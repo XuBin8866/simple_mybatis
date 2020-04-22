@@ -1,5 +1,6 @@
 package com.xxbb.smybatis.executor;
 
+import com.xxbb.smybatis.callback.MyCallback;
 import com.xxbb.smybatis.executor.parameter.DefaultParameterHandler;
 import com.xxbb.smybatis.executor.parameter.ParameterHandler;
 import com.xxbb.smybatis.executor.resultset.DefaultResultSetHandler;
@@ -7,7 +8,7 @@ import com.xxbb.smybatis.executor.resultset.ResultSetHandler;
 import com.xxbb.smybatis.executor.statement.SimpleStatementHandler;
 import com.xxbb.smybatis.executor.statement.StatementHandler;
 import com.xxbb.smybatis.mapping.MappedStatement;
-import com.xxbb.smybatis.pool.MyDataSourceImpl;
+import com.xxbb.smybatis.pool.MyDataSource;
 import com.xxbb.smybatis.session.Configuration;
 
 import java.sql.Connection;
@@ -26,7 +27,7 @@ public class SimpleExecutor implements Executor {
     /**
      * 连接池对象
      */
-    private final MyDataSourceImpl dataSource;
+    private final MyDataSource dataSource;
 
 
 
@@ -42,7 +43,7 @@ public class SimpleExecutor implements Executor {
      * @param executorCallback 会调接口
      * @return List结果集或受影响的行数
      */
-    public Object executeTemplate(MappedStatement mappedStatement, Object parameter, ExecutorCallback executorCallback) {
+    private Object executeTemplate(MappedStatement mappedStatement, Object parameter, MyCallback executorCallback) {
         Connection connection = null;
         try {
             //获取连接
@@ -75,23 +76,32 @@ public class SimpleExecutor implements Executor {
     @SuppressWarnings("unchecked")
     @Override
     public <E> List<E> doQuery(MappedStatement mappedStatement, Object parameter) {
-        return (List<E>) executeTemplate(mappedStatement, parameter, (statementHandler, preparedStatement) -> {
-            //执行sql语句
-            try {
+        return (List<E>) executeTemplate(mappedStatement, parameter, new MyCallback() {
+            /**
+             * 编写具体的数据库操作，区分查询和更新操作
+             *
+             * @param statementHandler  执行sql操作的对象
+             * @param preparedStatement 完全处理好的sql语句对象
+             * @return List集合或者受影响的行数
+             */
+            @Override
+            public Object doExecutor(StatementHandler statementHandler, PreparedStatement preparedStatement) {
+                //执行sql语句
+                try {
 
-                //获取结果集
-                ResultSet resultSet = statementHandler.query(preparedStatement);
-                //处理结果集，封装成泛型List对象返回
-                //这里可以获取mappedStatement对象是因为他是效果上的final，
-                //验证，将mappedStatement赋一个新的值：mappedStatement=new MappedStatement(); 会报错——>lambda 表达式中使用的变量应为 final 或 effectively final
-                ResultSetHandler resultSetHandler = new DefaultResultSetHandler(mappedStatement);
-                //封装到目标resultType的List集合中
-                return resultSetHandler.handlerResultSet(resultSet);
+                    //获取结果集
+                    ResultSet resultSet = statementHandler.query(preparedStatement);
+                    //处理结果集，封装成泛型List对象返回
+                    //这里可以获取mappedStatement对象是因为他是效果上的final，
+                    //验证，将mappedStatement赋一个新的值：mappedStatement=new MappedStatement(); 会报错——>lambda 表达式中使用的变量应为 final 或 effectively final
+                    ResultSetHandler resultSetHandler = new DefaultResultSetHandler(mappedStatement);
+                    //封装到目标resultType的List集合中
+                    return resultSetHandler.handlerResultSet(resultSet);
 
-            } catch (SQLException throwable) {
-                throw new RuntimeException(throwable.getMessage());
+                } catch (SQLException throwable) {
+                    throw new RuntimeException(throwable.getMessage());
+                }
             }
-
         });
     }
 
@@ -102,16 +112,32 @@ public class SimpleExecutor implements Executor {
      * @param parameter       参数
      * @return 受影响的行数
      */
+    @SuppressWarnings("")
     @Override
     public int doUpdate(MappedStatement mappedStatement, Object parameter) {
-        return (int) executeTemplate(mappedStatement, parameter, (statementHandler, preparedStatement) -> {
-            try {
-                return statementHandler.update(preparedStatement);
-            } catch (SQLException throwable) {
-                throw new RuntimeException(throwable.getMessage());
+        Integer res = (Integer) executeTemplate(mappedStatement, parameter, new MyCallback() {
+            /**
+             * 编写具体的数据库操作，区分查询和更新操作
+             *
+             * @param statementHandler  执行sql操作的对象
+             * @param preparedStatement 完全处理好的sql语句对象
+             * @return List集合或者受影响的行数
+             */
+            @Override
+            public Object doExecutor(StatementHandler statementHandler, PreparedStatement preparedStatement) {
+                try {
+                    return statementHandler.update(preparedStatement);
+                } catch (SQLException throwable) {
+                    throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + throwable.getMessage());
+                }
             }
-
         });
+        if (null != res) {
+            return res;
+        } else {
+            throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->"+
+                    "更新数据出现错误，受影响的行数返回空值");
+        }
     }
 
 

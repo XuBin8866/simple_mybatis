@@ -1,7 +1,9 @@
 package com.xxbb.smybatis.session;
 
+import com.xxbb.smybatis.bean.TableInfo;
 import com.xxbb.smybatis.binding.MapperRegistry;
 import com.xxbb.smybatis.mapping.MappedStatement;
+import com.xxbb.smybatis.pool.MyDataSource;
 import com.xxbb.smybatis.pool.MyDataSourceImpl;
 
 import java.util.HashMap;
@@ -29,7 +31,12 @@ public class Configuration {
     /**
      * 数据库连接池对象
      */
-    protected MyDataSourceImpl myDataSource = MyDataSourceImpl.getInstance();
+    protected MyDataSource dataSource = MyDataSourceImpl.getInstance();
+    /**
+     * 所连数据库所有表的信息与类的映射
+     */
+    protected Map<Class<?>, TableInfo> classToTableInfoMap = new HashMap<>();
+
 
     /**
      * 注册mapper接口类
@@ -73,8 +80,8 @@ public class Configuration {
         return this.mappedStatementMap.get(statement);
     }
 
-    public MyDataSourceImpl getDataSource() {
-        return myDataSource;
+    public MyDataSource getDataSource() {
+        return dataSource;
     }
 
     /**
@@ -96,5 +103,23 @@ public class Configuration {
      */
     public static String getProperty(String key, String defaultValue) {
         return pros.containsKey(key) ? pros.getProperty(key) : defaultValue;
+    }
+
+    /**
+     * 获取类表关系
+     *
+     * @return 所连数据库所有表的信息与类的映射
+     */
+    public Map<Class<?>, TableInfo> getClassToTableInfoMap() {
+        return classToTableInfoMap;
+    }
+
+    /**
+     * 设置类表关系集合
+     *
+     * @param classToTableInfoMap 所连数据库所有表的信息与类的映射
+     */
+    public void setClassToTableInfoMap(Map<Class<?>, TableInfo> classToTableInfoMap) {
+        this.classToTableInfoMap = classToTableInfoMap;
     }
 }

@@ -20,25 +20,43 @@ public interface UserMapper {
     /**
      * 获取单个user
      *
-     * @param id
-     * @return
-     * @see
+     * @param id id
+     * @return user
      */
     User getUser(String id);
 
     /**
      * 获取所有用户
      *
-     * @return
-     * @see
+     * @return users
      */
     List<User> getAll();
 
     /**
-     * 更新用户（功能未完成）
-     * @param name
-     * @param id
+     * 更新用户
+     *
+     * @param name name
+     * @param id   id
      * @return 受影响的行数
      */
     int updateUser(String name, Integer id);
+
+    /**
+     * 添加
+     *
+     * @param id       id
+     * @param username username
+     * @param password password
+     * @param ifFreeze if_freeze
+     * @return 受影响的行数
+     */
+    int insertUser(Integer id, String username, String password, Integer ifFreeze);
+
+    /**
+     * 删除用户
+     *
+     * @param id id
+     * @return 受影响的行数
+     */
+    int deleteUser(Integer id);
 }
