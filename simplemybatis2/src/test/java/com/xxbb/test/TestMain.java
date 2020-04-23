@@ -63,7 +63,8 @@ public class TestMain {
         System.out.println("new:" + (end1 - start1));
         long start2 = System.currentTimeMillis();
         for (int i = 0; i < 2100000000; i++) {
-            //clone方法效率更低
+            //由于jvm对new方式进行了优化，在该对象的实例化中逻辑也不复杂
+            //使得clone方法效率更低，在DefaultSqlSession中已删除了Cloneable接口
             //factory.cloneSession();
         }
         long end2 = System.currentTimeMillis();
@@ -111,8 +112,21 @@ public class TestMain {
         System.out.println("update：" + userMapper.updateUser("xxbb", 1));
         System.out.println("insert:" + userMapper.insertUser(24, "zzxx", "123456", 1));
         System.out.println("delete: " + userMapper.deleteUser(24));
-
     }
 
+    @Test
+    public void test() {
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build("conf.properties");
+        SqlSession session = factory.openSession();
+        User u = new User();
+        u.setId(24);
+        u.setUsername("zzxx");
+        u.setPassword("123456");
+        u.setIfFreeze(1);
+        System.out.println("testInsert：" + session.insert(u));
+        System.out.println("testUpdate：" + session.update(u));
+        System.out.println("testDelete:" + session.delete(u));
+
+    }
 
 }

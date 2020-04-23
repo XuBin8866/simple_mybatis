@@ -4,7 +4,6 @@ import com.xxbb.smybatis.constants.Constant;
 import com.xxbb.smybatis.mapping.MappedStatement;
 import com.xxbb.smybatis.session.SqlSession;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -14,9 +13,8 @@ import java.util.Collection;
  *
  * @author xxbb
  */
-public class MapperProxy<T> implements InvocationHandler, Serializable {
+public class MapperProxy<T> implements InvocationHandler {
 
-    private static final long serialVersionUID = -7861758496991319661L;
 
     private final SqlSession sqlSession;
 
@@ -30,12 +28,11 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
         try {
             return this.execute(method, args);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + e.getMessage());
         }
     }
 

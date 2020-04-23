@@ -41,6 +41,8 @@ public class TestMain {
         u.setPassword("123456");
         u.setIfFreeze(1);
         System.out.println("testInsert：" + session.insert(u));
+        System.out.println("testUpdate：" + session.update(u));
+        System.out.println("testDelete:" + session.delete(u));
     }
 
     public void testDelete() {
