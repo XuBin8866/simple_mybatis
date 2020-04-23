@@ -259,5 +259,13 @@ public class DefaultSqlSession implements SqlSession {
         return this.configuration;
     }
 
-
+    /**
+     * 获取当前执行器
+     *
+     * @return 当前执行器
+     */
+    @Override
+    public Executor getExecutor() {
+        return executor;
+    }
 }

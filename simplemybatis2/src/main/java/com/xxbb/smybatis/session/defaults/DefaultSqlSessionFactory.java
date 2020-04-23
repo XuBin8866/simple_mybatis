@@ -36,6 +36,10 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
     private DefaultSqlSessionFactory(Configuration configuration) {
         //防止反射通过反射实例化对象而跳过getInstance方法
+        //只能在已通过getInstance方法创建好对象后起作用
+        //如果一开始就使用反射创建对象的话，由于instance对象并没有被实例化，所以能够一直用反射创建对象
+        //但由于这里的工厂是通过构建者模式创建的，如果直接反射创建该工厂对象会因为Configuration对象中缺少配置文件的参数而创建失败
+        //要想使用反射创建必须满足instance对象为空，Configuration类中已经加载了配置文件
         if (instance != null) {
             throw new RuntimeException("Object has been instanced,please do not create Object by Reflect!!!");
         }
@@ -63,10 +67,8 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
         return instance;
     }
 
-
     @Override
     public SqlSession openSession() {
-
         return new DefaultSqlSession(this.configuration);
     }
 

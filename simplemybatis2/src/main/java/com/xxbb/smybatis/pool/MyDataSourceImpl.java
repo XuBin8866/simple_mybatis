@@ -90,10 +90,13 @@ public class MyDataSourceImpl implements MyDataSource {
     private static volatile MyDataSourceImpl instance;
 
     private MyDataSourceImpl() {
-
         //防止反射破坏单例
+        //防止反射通过反射实例化对象而跳过getInstance方法
+        //只能在已通过getInstance方法创建好对象后起作用
+        //如果一开始就使用反射创建对象的话，由于instance对象并没有被实例化，所以能够一直用反射创建对象
+        //要想使用反射创建必须满足instance对象为空，Configuration类中已经加载了配置文件
         if (instance != null) {
-            throw new RuntimeException("Object has been instanced!!!");
+            throw new RuntimeException("Object has been instanced,please do not create Object by Reflect!!!");
         }
         init();
     }

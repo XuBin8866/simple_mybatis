@@ -1,5 +1,7 @@
 package com.xxbb.smybatis.session;
 
+import com.xxbb.smybatis.executor.Executor;
+
 import java.util.List;
 
 /**
@@ -98,5 +100,10 @@ public interface SqlSession {
      */
     Configuration getConfiguration();
 
-
+    /**
+     * 获取执行器
+     *
+     * @return 执行器
+     */
+    Executor getExecutor();
 }
