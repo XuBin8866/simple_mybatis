@@ -68,6 +68,14 @@ public class DefaultSqlSession implements SqlSession {
         return this.executor.doQuery(mappedStatement, parameter);
     }
 
+    /**
+     * 生成sql语句并执行的模板方法
+     *
+     * @param type     po类
+     * @param callback 回调接口
+     * @param <T>      泛型
+     * @return 受影响的行数
+     */
     private <T> Object generateSqlTemplate(T type, MyCallback callback) {
         //获取类对象
         Class<?> clazz = type.getClass();
@@ -96,8 +104,8 @@ public class DefaultSqlSession implements SqlSession {
                 params);
         //封装到MappedStatement对象中
         mappedStatement.setSql(sql.toString());
-        //要将List数组转化为Object[]数组，不然在ParameterHandler中会进行isArray()判断
-        //如果传入的是List返回的是false
+        //要将List数组转化为Object[]数组，不然在ParameterHandler中会进行isArray()判断，返回false，
+        //而不会去遍历参数，直接将这个list集合作为一个参数传入sql语句中，会报参数个数异常的错误
         return this.executor.doUpdate(mappedStatement, params.toArray());
     }
 

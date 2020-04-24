@@ -88,7 +88,6 @@ public class SimpleExecutor implements Executor {
             public Object doExecutor(StatementHandler statementHandler, PreparedStatement preparedStatement) {
                 //执行sql语句
                 try {
-
                     //获取结果集
                     ResultSet resultSet = statementHandler.query(preparedStatement);
                     //处理结果集，封装成泛型List对象返回
@@ -112,7 +111,6 @@ public class SimpleExecutor implements Executor {
      * @param parameter       参数
      * @return 受影响的行数
      */
-    @SuppressWarnings("")
     @Override
     public int doUpdate(MappedStatement mappedStatement, Object parameter) {
         Integer res = (Integer) executeTemplate(mappedStatement, parameter, new MyCallback() {
