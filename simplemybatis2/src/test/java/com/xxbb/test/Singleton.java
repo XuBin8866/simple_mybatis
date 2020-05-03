@@ -50,7 +50,7 @@ public class Singleton implements Serializable {
      * @return 单例对象
      * @throws ObjectStreamException 异常
      */
-    private Object readResolve() throws ObjectStreamException {
+    protected Object readResolve() throws ObjectStreamException {
         return instance;
     }
 
