@@ -11,6 +11,7 @@ import com.xxbb.smybatis.utils.CommonUtils;
 import com.xxbb.smybatis.utils.LogUtils;
 import com.xxbb.smybatis.utils.StringUtils;
 import com.xxbb.smybatis.utils.XmlParseUtils;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.sql.Connection;
@@ -34,6 +35,10 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
      * 单例工厂对象
      */
     private static volatile DefaultSqlSessionFactory instance;
+    /**
+     * 日志管理器
+     */
+    private final Logger logger = LogUtils.getLogger();
 
     private DefaultSqlSessionFactory(Configuration configuration) {
         //防止反射通过反射实例化对象而跳过getInstance方法
@@ -81,7 +86,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     private void loadMappersInfo(String dirName) {
         String resource = Objects.requireNonNull
                 (DefaultSqlSessionFactory.class.getClassLoader().getResource(dirName)).getPath();
-        LogUtils.LOGGER.debug("加载资源路径" + resource);
+        logger.debug("加载资源路径" + resource);
         File mapperDir = new File(resource);
         //判断该路径是否为文件夹
         if (mapperDir.isDirectory()) {
@@ -150,7 +155,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
                 }
                 //由于在SqlSession中需要利用到主键进行修改和删除操作，所以如果当前表没有主键需要抛出异常
                 if (tableInfo.getPrimaryKeys().size() == 0) {
-                    LogUtils.LOGGER.debug("数据库表" + tableName + "未检测到主键");
+                    logger.debug("数据库表" + tableName + "未检测到主键");
                 }
                 //获取外键列信息
                 ResultSet foreignKeyResultSet = databaseMetaData.getExportedKeys(catalog, "%", tableName);
@@ -163,9 +168,9 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
                 //反射获取该表对应的po类
                 Class<?> clazz = Class.forName(Configuration.getProperty(Constant.PO_LOCATION) + "." + StringUtils.tableNameToClassName(tableName));
                 //将类与表的映射关系存入configuration对象的map中
-                System.out.println(tableInfo);
+                logger.debug("获取数据库表对象：" + tableInfo);
                 this.configuration.getClassToTableInfoMap().put(clazz, tableInfo);
-                System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "加载实体类与数据库表的映射：" +
+                logger.debug("加载实体类与数据库表的映射：" +
                         Configuration.getProperty(Constant.PO_LOCATION) + "." + StringUtils.tableNameToClassName(tableName) + "<------>" +
                         tableName);
             }

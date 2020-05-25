@@ -11,6 +11,7 @@ import com.xxbb.smybatis.session.SqlSession;
 import com.xxbb.smybatis.utils.LogUtils;
 import com.xxbb.smybatis.utils.ReflectUtils;
 import com.xxbb.smybatis.utils.StringUtils;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class DefaultSqlSession implements SqlSession {
      * 执行器
      */
     private final Executor executor;
-
+    private final Logger logger = LogUtils.getLogger();
 
     public DefaultSqlSession(Configuration configuration) {
         this.configuration = configuration;
@@ -97,8 +98,8 @@ public class DefaultSqlSession implements SqlSession {
         //去除最后一个逗号
         sql.setCharAt(sql.length() - 1, ' ');
         //打印数据
-        LogUtils.LOGGER.debug(sql.toString());
-        LogUtils.LOGGER.debug("params:" + params);
+        logger.debug(sql.toString());
+        logger.debug("params:" + params);
         //封装到MappedStatement对象中
         mappedStatement.setSql(sql.toString());
         //要将List数组转化为Object[]数组，不然在ParameterHandler中会进行isArray()判断，返回false，

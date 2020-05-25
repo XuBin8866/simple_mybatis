@@ -43,7 +43,7 @@ public class SimpleStatementHandler implements StatementHandler {
             //替换#{},预处理，防止sql注入
             return connection.prepareStatement(parseSymbol(originSql));
         } else {
-            LogUtils.LOGGER.error("origin sql is null.");
+            LogUtils.getLogger().error("origin sql is null.");
             throw new RuntimeException("origin sql is null.");
         }
     }

@@ -11,6 +11,7 @@ import com.xxbb.smybatis.mapping.MappedStatement;
 import com.xxbb.smybatis.pool.MyDataSource;
 import com.xxbb.smybatis.session.Configuration;
 import com.xxbb.smybatis.utils.LogUtils;
+import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,7 +31,7 @@ public class SimpleExecutor implements Executor {
      */
     private final MyDataSource dataSource;
 
-
+    private static final Logger LOGGER = LogUtils.getLogger();
     public SimpleExecutor(Configuration configuration) {
         dataSource = configuration.getDataSource();
     }
@@ -55,7 +56,7 @@ public class SimpleExecutor implements Executor {
             //给占位符?的参数赋值
             ParameterHandler parameterHandler = new DefaultParameterHandler(parameter);
             parameterHandler.setParameters(preparedStatement);
-            LogUtils.LOGGER.debug("preparedStatement:" + preparedStatement);
+            LOGGER.debug("preparedStatement:" + preparedStatement);
             return executorCallback.doExecutor(statementHandler, preparedStatement);
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,7 +99,7 @@ public class SimpleExecutor implements Executor {
                     return resultSetHandler.handlerResultSet(resultSet);
 
                 } catch (SQLException throwable) {
-                    LogUtils.LOGGER.error(throwable.getMessage());
+                    LOGGER.error(throwable.getMessage());
                     throw new RuntimeException(throwable);
                 }
             }
@@ -127,7 +128,7 @@ public class SimpleExecutor implements Executor {
                 try {
                     return statementHandler.update(preparedStatement);
                 } catch (SQLException throwable) {
-                    LogUtils.LOGGER.error(throwable.getMessage());
+                    LOGGER.error(throwable.getMessage());
                     throw new RuntimeException(throwable);
                 }
             }
@@ -135,7 +136,7 @@ public class SimpleExecutor implements Executor {
         if (null != res) {
             return res;
         } else {
-            LogUtils.LOGGER.error("更新数据出现错误，受影响的行数返回空值");
+            LOGGER.error("更新数据出现错误，受影响的行数返回空值");
             throw new RuntimeException("更新数据出现错误，受影响的行数返回空值");
         }
     }

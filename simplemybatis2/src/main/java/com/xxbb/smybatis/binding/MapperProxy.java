@@ -29,12 +29,12 @@ public class MapperProxy<T> implements InvocationHandler {
 
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         try {
             return this.execute(method, args);
         } catch (Exception e) {
-            LogUtils.LOGGER.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
+            LogUtils.getLogger().error(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
