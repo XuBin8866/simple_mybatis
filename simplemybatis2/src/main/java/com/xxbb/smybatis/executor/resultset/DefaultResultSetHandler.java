@@ -51,7 +51,6 @@ public class DefaultResultSetHandler implements ResultSetHandler {
                 result.add(rowObject);
 
             }
-            System.out.println(result.get(0));
             return result;
         } catch (Exception e) {
             e.printStackTrace();

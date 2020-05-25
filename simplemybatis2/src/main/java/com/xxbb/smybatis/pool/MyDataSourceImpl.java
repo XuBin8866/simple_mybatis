@@ -2,6 +2,7 @@ package com.xxbb.smybatis.pool;
 
 import com.xxbb.smybatis.constants.Constant;
 import com.xxbb.smybatis.session.Configuration;
+import com.xxbb.smybatis.utils.LogUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -64,22 +65,22 @@ public class MyDataSourceImpl implements MyDataSource {
         try {
             initCount = Integer.parseInt(Configuration.getProperty(Constant.JDBC_INIT_COUNT));
         } catch (Exception e) {
-            System.out.println("initCount使用默认值：" + initCount);
+            LogUtils.LOGGER.debug("initCount使用默认值：" + initCount);
         }
         try {
             minCount = Integer.parseInt(Configuration.getProperty(Constant.JDBC_MIN_COUNT));
         } catch (Exception e) {
-            System.out.println("minCount使用默认值：" + minCount);
+            LogUtils.LOGGER.debug("minCount使用默认值：" + minCount);
         }
         try {
             maxCount = Integer.parseInt(Configuration.getProperty(Constant.JDBC_MAX_COUNT));
         } catch (Exception e) {
-            System.out.println("maxCount使用默认值：" + maxCount);
+            LogUtils.LOGGER.debug("maxCount使用默认值：" + maxCount);
         }
         try {
             increasingCount = Integer.parseInt(Configuration.getProperty(Constant.JDBC_INCREASING_COUNT));
         } catch (Exception e) {
-            System.out.println("increasingCount使用默认值：" + increasingCount);
+            LogUtils.LOGGER.debug("increasingCount使用默认值：" + increasingCount);
         }
 
     }
@@ -96,6 +97,7 @@ public class MyDataSourceImpl implements MyDataSource {
         //如果一开始就使用反射创建对象的话，由于instance对象并没有被实例化，所以能够一直用反射创建对象
         //要想使用反射创建必须满足instance对象为空，Configuration类中已经加载了配置文件
         if (instance != null) {
+            LogUtils.LOGGER.error("Object has been instanced,reject create Object by Reflect!!!");
             throw new RuntimeException("Object has been instanced,reject create Object by Reflect!!!");
         }
         init();
@@ -124,9 +126,7 @@ public class MyDataSourceImpl implements MyDataSource {
                 createdCount++;
             }
         }
-        System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "连接池连接初始化----->连接池对象：" + this);
-        System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "连接池连接初始化----->连接池可用连接数量：" + createdCount);
-
+        LogUtils.LOGGER.debug("连接池连接初始化----->连接池对象：" + this + "----->连接池可用连接数量：" + createdCount);
     }
 
     /**
@@ -140,6 +140,7 @@ public class MyDataSourceImpl implements MyDataSource {
             return DriverManager.getConnection(URL, USERNAME, PASSWORD);
 
         } catch (Exception e) {
+            LogUtils.LOGGER.error("数据库连接创建失败：", e);
             throw new RuntimeException("数据库连接创建失败：" + e.getMessage());
         }
     }
@@ -150,6 +151,7 @@ public class MyDataSourceImpl implements MyDataSource {
     private synchronized void autoAdd() {
         //增长步长默认为2
         if (createdCount == maxCount) {
+            LogUtils.LOGGER.error("连接池中连接已达最大数量,无法再次创建连接");
             throw new RuntimeException("连接池中连接已达最大数量,无法再次创建连接");
         }
         //临界时判断增长个数
@@ -172,13 +174,12 @@ public class MyDataSourceImpl implements MyDataSource {
             try {
                 conns.removeFirst().close();
                 createdCount--;
-                System.out.print("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "已关闭多余空闲连接");
-                System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "  当前已创建连接数：" + createdCount + "  当前空闲连接数：" + conns.size());
+                LogUtils.LOGGER.debug("已关闭多余空闲连接。当前已创建连接数：" + createdCount + "  当前空闲连接数：" + conns.size());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "空闲连接保留在到连接池中或已被使用" + "  已创建连接数量：" + createdCount + "  空闲连接数" + conns.size());
+            LogUtils.LOGGER.debug("空闲连接保留在到连接池中或已被使用。当前已创建连接数量：" + createdCount + "  当前空闲连接数" + conns.size());
         }
     }
 
@@ -192,7 +193,7 @@ public class MyDataSourceImpl implements MyDataSource {
         //判断池中是否还有连接
         synchronized (MONITOR) {
             if (conns.size() > 0) {
-                System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "获取到连接：" + conns.getFirst() + "  已创建连接数量：" + createdCount + "  空闲连接数" + (conns.size() - 1));
+                LogUtils.LOGGER.debug("获取到连接：" + conns.getFirst() + "  当前已创建连接数量：" + createdCount + "  当前空闲连接数" + (conns.size() - 1));
                 return conns.removeFirst();
             }
             //如果没有空连接，则调用自动增长方法
@@ -201,7 +202,7 @@ public class MyDataSourceImpl implements MyDataSource {
                 return getConnection();
             }
             //如果连接池连接数量达到上限,则等待连接归还
-            System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "连接池中连接已用尽，请等待连接归还");
+            LogUtils.LOGGER.debug("连接池中连接已用尽，请等待连接归还");
             try {
                 MONITOR.wait();
             } catch (InterruptedException e) {
@@ -222,7 +223,7 @@ public class MyDataSourceImpl implements MyDataSource {
     public void returnConnection(Connection conn) {
 
         synchronized (MONITOR) {
-            System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "准备归还数据库连接" + conn);
+            LogUtils.LOGGER.debug("准备归还数据库连接" + conn);
             conns.add(conn);
             MONITOR.notify();
             autoReduce();

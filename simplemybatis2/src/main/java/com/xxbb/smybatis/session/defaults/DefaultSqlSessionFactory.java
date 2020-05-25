@@ -8,6 +8,7 @@ import com.xxbb.smybatis.session.Configuration;
 import com.xxbb.smybatis.session.SqlSession;
 import com.xxbb.smybatis.session.SqlSessionFactory;
 import com.xxbb.smybatis.utils.CommonUtils;
+import com.xxbb.smybatis.utils.LogUtils;
 import com.xxbb.smybatis.utils.StringUtils;
 import com.xxbb.smybatis.utils.XmlParseUtils;
 
@@ -80,7 +81,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     private void loadMappersInfo(String dirName) {
         String resource = Objects.requireNonNull
                 (DefaultSqlSessionFactory.class.getClassLoader().getResource(dirName)).getPath();
-        System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + "加载资源路径" + resource);
+        LogUtils.LOGGER.debug("加载资源路径" + resource);
         File mapperDir = new File(resource);
         //判断该路径是否为文件夹
         if (mapperDir.isDirectory()) {
@@ -149,8 +150,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
                 }
                 //由于在SqlSession中需要利用到主键进行修改和删除操作，所以如果当前表没有主键需要抛出异常
                 if (tableInfo.getPrimaryKeys().size() == 0) {
-                    throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" +
-                            "数据库表" + tableName + "未检测到主键");
+                    LogUtils.LOGGER.debug("数据库表" + tableName + "未检测到主键");
                 }
                 //获取外键列信息
                 ResultSet foreignKeyResultSet = databaseMetaData.getExportedKeys(catalog, "%", tableName);

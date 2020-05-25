@@ -1,5 +1,7 @@
 package com.xxbb.smybatis.executor.parameter;
 
+import com.xxbb.smybatis.utils.LogUtils;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -27,7 +29,7 @@ public class DefaultParameterHandler implements ParameterHandler {
             if (null != parameter) {
 
                 if (parameter.getClass().isArray()) {
-                    System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + parameter.getClass());
+                    LogUtils.LOGGER.debug(String.valueOf(parameter.getClass()));
                     Object[] params = (Object[]) parameter;
                     for (int i = 0; i < params.length; i++) {
                         paramPreparedStatement.setObject(i + 1, params[i]);

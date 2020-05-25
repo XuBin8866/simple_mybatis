@@ -10,6 +10,7 @@ import com.xxbb.smybatis.executor.statement.StatementHandler;
 import com.xxbb.smybatis.mapping.MappedStatement;
 import com.xxbb.smybatis.pool.MyDataSource;
 import com.xxbb.smybatis.session.Configuration;
+import com.xxbb.smybatis.utils.LogUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,7 +29,6 @@ public class SimpleExecutor implements Executor {
      * 连接池对象
      */
     private final MyDataSource dataSource;
-
 
 
     public SimpleExecutor(Configuration configuration) {
@@ -55,7 +55,7 @@ public class SimpleExecutor implements Executor {
             //给占位符?的参数赋值
             ParameterHandler parameterHandler = new DefaultParameterHandler(parameter);
             parameterHandler.setParameters(preparedStatement);
-            System.out.println("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + preparedStatement);
+            LogUtils.LOGGER.debug("preparedStatement:" + preparedStatement);
             return executorCallback.doExecutor(statementHandler, preparedStatement);
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,7 +98,8 @@ public class SimpleExecutor implements Executor {
                     return resultSetHandler.handlerResultSet(resultSet);
 
                 } catch (SQLException throwable) {
-                    throw new RuntimeException(throwable.getMessage());
+                    LogUtils.LOGGER.error(throwable.getMessage());
+                    throw new RuntimeException(throwable);
                 }
             }
         });
@@ -126,18 +127,18 @@ public class SimpleExecutor implements Executor {
                 try {
                     return statementHandler.update(preparedStatement);
                 } catch (SQLException throwable) {
-                    throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + throwable.getMessage());
+                    LogUtils.LOGGER.error(throwable.getMessage());
+                    throw new RuntimeException(throwable);
                 }
             }
         });
         if (null != res) {
             return res;
         } else {
-            throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->"+
-                    "更新数据出现错误，受影响的行数返回空值");
+            LogUtils.LOGGER.error("更新数据出现错误，受影响的行数返回空值");
+            throw new RuntimeException("更新数据出现错误，受影响的行数返回空值");
         }
     }
-
 
 
 }

@@ -3,6 +3,7 @@ package com.xxbb.smybatis.binding;
 import com.xxbb.smybatis.constants.Constant;
 import com.xxbb.smybatis.mapping.MappedStatement;
 import com.xxbb.smybatis.session.SqlSession;
+import com.xxbb.smybatis.utils.LogUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -32,7 +33,8 @@ public class MapperProxy<T> implements InvocationHandler {
         try {
             return this.execute(method, args);
         } catch (Exception e) {
-            throw new RuntimeException("[" + Thread.currentThread().getName() + "]" + this.getClass().getName() + "--->" + e.getMessage());
+            LogUtils.LOGGER.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 

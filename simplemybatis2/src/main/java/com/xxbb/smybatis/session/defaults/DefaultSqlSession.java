@@ -8,6 +8,7 @@ import com.xxbb.smybatis.executor.SimpleExecutor;
 import com.xxbb.smybatis.mapping.MappedStatement;
 import com.xxbb.smybatis.session.Configuration;
 import com.xxbb.smybatis.session.SqlSession;
+import com.xxbb.smybatis.utils.LogUtils;
 import com.xxbb.smybatis.utils.ReflectUtils;
 import com.xxbb.smybatis.utils.StringUtils;
 
@@ -96,12 +97,8 @@ public class DefaultSqlSession implements SqlSession {
         //去除最后一个逗号
         sql.setCharAt(sql.length() - 1, ' ');
         //打印数据
-        System.out.println("[" + Thread.currentThread().getName() + "]" +
-                this.getClass().getName() + "--->" +
-                sql.toString());
-        System.out.println("[" + Thread.currentThread().getName() + "]" +
-                this.getClass().getName() + "--->" + "params:" +
-                params);
+        LogUtils.LOGGER.debug(sql.toString());
+        LogUtils.LOGGER.debug("params:" + params);
         //封装到MappedStatement对象中
         mappedStatement.setSql(sql.toString());
         //要将List数组转化为Object[]数组，不然在ParameterHandler中会进行isArray()判断，返回false，

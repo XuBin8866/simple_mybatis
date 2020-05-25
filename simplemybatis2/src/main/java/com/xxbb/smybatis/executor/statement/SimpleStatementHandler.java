@@ -1,6 +1,7 @@
 package com.xxbb.smybatis.executor.statement;
 
 import com.xxbb.smybatis.mapping.MappedStatement;
+import com.xxbb.smybatis.utils.LogUtils;
 import com.xxbb.smybatis.utils.StringUtils;
 
 import java.sql.Connection;
@@ -42,6 +43,7 @@ public class SimpleStatementHandler implements StatementHandler {
             //替换#{},预处理，防止sql注入
             return connection.prepareStatement(parseSymbol(originSql));
         } else {
+            LogUtils.LOGGER.error("origin sql is null.");
             throw new RuntimeException("origin sql is null.");
         }
     }

@@ -16,7 +16,7 @@ public class TestMain {
         //测试，可以看控制台打印结果
         TestMain t = new TestMain();
         //读取mapper文件的CRUD测试
-        t.testMain();
+        //t.testMain();
         //自动生成增删改语句并执行的测试
         t.testUpdate();
         t.testInsert();
@@ -41,8 +41,6 @@ public class TestMain {
         u.setPassword("123456");
         u.setIfFreeze(1);
         System.out.println("testInsert：" + session.insert(u));
-        System.out.println("testUpdate：" + session.update(u));
-        System.out.println("testDelete:" + session.delete(u));
     }
 
     public void testDelete() {
@@ -58,7 +56,7 @@ public class TestMain {
         SqlSessionFactory factory = new SqlSessionFactoryBuilder().build("conf.properties");
         SqlSession session = factory.openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
-        System.out.println(userMapper.getAll());
+        System.out.println("testMain.select：" + userMapper.getAll());
         System.out.println("testMain.update：" + userMapper.updateUser("xxbb", 1));
         System.out.println("testMain.insert:" + userMapper.insertUser(24, "zzxx", "123456", 1));
         System.out.println("testMain.delete: " + userMapper.deleteUser(24));
