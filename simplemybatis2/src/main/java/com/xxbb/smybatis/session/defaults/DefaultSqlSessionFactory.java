@@ -7,9 +7,9 @@ import com.xxbb.smybatis.pool.MyDataSource;
 import com.xxbb.smybatis.session.Configuration;
 import com.xxbb.smybatis.session.SqlSession;
 import com.xxbb.smybatis.session.SqlSessionFactory;
-import com.xxbb.smybatis.utils.CommonUtils;
 import com.xxbb.smybatis.utils.LogUtils;
 import com.xxbb.smybatis.utils.StringUtils;
+import com.xxbb.smybatis.utils.ValidationUtils;
 import com.xxbb.smybatis.utils.XmlParseUtils;
 import org.slf4j.Logger;
 
@@ -93,7 +93,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
             //获取文件夹下所有文件
             File[] mappers = mapperDir.listFiles();
             //非空判断
-            if (CommonUtils.isNotEmpty(mappers)) {
+            if (ValidationUtils.isNotEmpty(mappers)) {
                 for (File file : mappers) {
                     //如果还存在文件夹则继续获取
                     if (file.isDirectory()) {

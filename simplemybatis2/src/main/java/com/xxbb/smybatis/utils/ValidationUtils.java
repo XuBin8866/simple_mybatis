@@ -8,7 +8,7 @@ import java.util.Map;
  *
  * @author xxbb
  */
-public class CommonUtils {
+public class ValidationUtils {
     /**
      * list/set is not empty
      *

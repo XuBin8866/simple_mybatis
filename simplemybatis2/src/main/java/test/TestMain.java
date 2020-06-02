@@ -14,13 +14,13 @@ import test.mapper.UserMapper;
 public class TestMain {
     public static void main(String[] args) {
         //测试，可以看控制台打印结果
-        TestMain t = new TestMain();
-        //读取mapper文件的CRUD测试
-        //t.testMain();
-        //自动生成增删改语句并执行的测试
-        t.testUpdate();
-        t.testInsert();
-        t.testDelete();
+//        TestMain t = new TestMain();
+//        //读取mapper文件的CRUD测试
+//        //t.testMain();
+//        //自动生成增删改语句并执行的测试
+//        t.testUpdate();
+//        t.testInsert();
+//        t.testDelete();
     }
 
     public void testUpdate() {
